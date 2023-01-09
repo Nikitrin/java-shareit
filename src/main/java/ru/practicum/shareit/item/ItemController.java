@@ -4,12 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.item.service.impl.ImplItemService;
 
 import javax.validation.Valid;
-import java.net.http.HttpHeaders;
 import java.util.List;
 
 @Slf4j
