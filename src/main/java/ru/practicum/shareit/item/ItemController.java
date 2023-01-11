@@ -2,11 +2,12 @@ package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.common.ItemCreate;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -18,9 +19,9 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(
-            @Valid @RequestBody ItemDto itemDto,
-            @RequestHeader("X-Sharer-User-Id") Integer userId) {
-        log.info("Create item: name = {}, owner with user id = {}", itemDto.getName(), userId);
+        @Validated(ItemCreate.class) @RequestBody ItemDto itemDto,
+        @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        log.info("UserCreate item: name = {}, owner with user id = {}", itemDto.getName(), userId);
         return itemService.createItem(itemDto, userId);
     }
 
@@ -29,7 +30,7 @@ public class ItemController {
             @RequestBody ItemDto itemDto,
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @PathVariable Integer itemId) {
-        log.info("Update item with id = {}, owner with user id = {}", itemId, userId);
+        log.info("UserUpdate item with id = {}, owner with user id = {}", itemId, userId);
         return itemService.updateItem(itemDto, itemId, userId);
     }
 

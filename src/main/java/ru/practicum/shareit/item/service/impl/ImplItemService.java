@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.storage.ItemStorage;
@@ -22,29 +23,29 @@ public class ImplItemService implements ItemService {
     @Override
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
         User user = userStorage.getUserById(userId);
-        Item item = ItemDto.toItem(itemDto);
+        Item item = ItemMapper.toItem(itemDto);
         item.setOwner(user);
-        return ItemDto.toItemDto(itemStorage.createItem(item));
+        return ItemMapper.toDto(itemStorage.createItem(item));
     }
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, Integer itemId, Integer userId) {
         User user = userStorage.getUserById(userId);
-        Item item = ItemDto.toItem(itemDto);
+        Item item = ItemMapper.toItem(itemDto);
         item.setOwner(user);
         item.setId(itemId);
-        return ItemDto.toItemDto(itemStorage.updateItem(item));
+        return ItemMapper.toDto(itemStorage.updateItem(item));
     }
 
     @Override
     public ItemDto getItemById(Integer itemId, Integer userId) {
-        return ItemDto.toItemDto(itemStorage.getItemById(itemId, userId));
+        return ItemMapper.toDto(itemStorage.getItemById(itemId, userId));
     }
 
     @Override
     public List<ItemDto> getAllItems(Integer userId) {
         List<Item> items = itemStorage.getAllItems(userId);
-        return items.stream().map(ItemDto::toItemDto).collect(Collectors.toList());
+        return items.stream().map(ItemMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
@@ -54,6 +55,6 @@ public class ImplItemService implements ItemService {
         }
         text = text.toLowerCase();
         List<Item> items = itemStorage.searchItemsByText(text);
-        return items.stream().map(ItemDto::toItemDto).collect(Collectors.toList());
+        return items.stream().map(ItemMapper::toDto).collect(Collectors.toList());
     }
 }

@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.common.UserCreate;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -14,27 +17,12 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 public class UserDto {
     private Integer id;
-    @NotNull(message = "Name can't be null")
-    @NotBlank(message = "Name can't be blank")
-    @Size(min = 1, max = 50, message = "Max length of name is 50 characters, min length is 1 character")
-    @Pattern(regexp = "^\\S*$", message = "Login cannot contain spaces")
+    @NotBlank(message = "Name can't be blank or null", groups = {UserCreate.class})
+    @Size(min = 1, max = 50, message = "Max length of name is 50, min length is 1 character",
+        groups = {UserCreate.class})
+    @Pattern(regexp = "^\\S*$", message = "Login cannot contain spaces", groups = {UserCreate.class})
     private String name;
-    @NotNull(message = "Email can't be null")
-    @NotBlank(message = "Email can't be blank")
-    @Email(message = "Invalid email")
+    @NotBlank(message = "Email can't be blank or null", groups = {UserCreate.class})
+    @Email(message = "Invalid email", groups = {UserCreate.class})
     private String email;
-
-    public static UserDto toUserDto(User user) {
-        return new UserDto(
-                user.getId(),
-                user.getName(),
-                user.getEmail());
-    }
-
-    public static User toUser(UserDto userDto) {
-        return new User(
-                userDto.getId(),
-                userDto.getName(),
-                userDto.getEmail());
-    }
 }
