@@ -1,6 +1,7 @@
 package ru.practicum.shareit.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +14,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ru.practicum.shareit.handler.exception.ForbiddenException;
-import ru.practicum.shareit.handler.exception.NotFoundException;
-import ru.practicum.shareit.handler.exception.ValidationException;
+import ru.practicum.shareit.handler.exception.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,30 +29,38 @@ import java.util.stream.Collectors;
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String TIMESTAMP = "timestamp";
     private static final String STATUS = "status";
-    private static final String ERROR = "error";
+    private static final String ERROR = "error message";
     private static final String PATH = "path";
-    private static final String REASONS = "reasons";
+    private static final String REASONS = "error";
 
 
     @ExceptionHandler(value = NotFoundException.class)
     protected ResponseEntity<Object> handleNotFound(NotFoundException ex, WebRequest request) {
-        log.error("Not found error: {}", ex.getMessage());
+        log.error("NotFoundException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(REASONS, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(value = ValidationException.class)
-    protected ResponseEntity<Object> handleInvalidInput(ValidationException ex, WebRequest request) {
-        log.error("Validation error: {}", ex.getMessage());
-        Map<String, Object> body = getGeneralErrorBody(HttpStatus.CONFLICT, request);
+    protected ResponseEntity<Object> handlerInvalidInput(ValidationException ex, WebRequest request) {
+        log.error("ValidationException: {}", ex.getMessage());
+        Map<String, Object> body = getGeneralErrorBody(HttpStatus.BAD_REQUEST, request);
         body.put(REASONS, ex.getMessage());
-        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.CONFLICT, request);
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(value = UnsupportedStatusException.class)
+    protected ResponseEntity<Object> handlerUnsupportedStatus(UnsupportedStatusException ex, WebRequest request) {
+        log.error("UnsupportedStatusException: {}", ex.getMessage());
+        Map<String, Object> body = getGeneralErrorBody(HttpStatus.BAD_REQUEST, request);
+        body.put(REASONS, ex.getMessage());
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(value = MissingRequestHeaderException.class)
     protected ResponseEntity<Object> handlerMissingHeader(MissingRequestHeaderException ex, WebRequest request) {
-        log.error("Missing request header: {}", ex.getMessage());
+        log.error("MissingRequestHeaderException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.BAD_REQUEST, request);
         body.put(REASONS, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
@@ -60,18 +68,36 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(value = ForbiddenException.class)
     protected ResponseEntity<Object> handlerForbidden(ForbiddenException ex, WebRequest request) {
-        log.error("Forbidden: {}", ex.getMessage());
+        log.error("ForbiddenException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.FORBIDDEN, request);
         body.put(REASONS, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler(value = Throwable.class)
-    protected ResponseEntity<Object> otherHandler(Exception ex, WebRequest request) {
-        log.error("I’m a teapot: {}", ex.getMessage());
-        Map<String, Object> body = getGeneralErrorBody(HttpStatus.I_AM_A_TEAPOT, request);
+    @ExceptionHandler(value = AvailableException.class)
+    protected ResponseEntity<Object> handlerAvailable(AvailableException ex, WebRequest request) {
+        log.error("AvailableException: {}", ex.getMessage());
+        Map<String, Object> body = getGeneralErrorBody(HttpStatus.BAD_REQUEST, request);
         body.put(REASONS, ex.getMessage());
-        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request);
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    protected ResponseEntity<Object> handlerDataIntegrityViolation(DataIntegrityViolationException ex,
+                                                                   WebRequest request) {
+        log.error("DataIntegrityViolationException: {}", ex.getMessage());
+        Map<String, Object> body = getGeneralErrorBody(HttpStatus.CONFLICT, request);
+        body.put(REASONS, ex.getMessage());
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler(value = NoSuchElementException.class)
+    protected ResponseEntity<Object> handlerNoSuchElementException(NoSuchElementException ex,
+                                                                   WebRequest request) {
+        log.error("NoSuchElementException: {}", ex.getMessage());
+        Map<String, Object> body = getGeneralErrorBody(HttpStatus.NOT_FOUND, request);
+        body.put(REASONS, ex.getMessage());
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @Override
@@ -82,7 +108,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         log.info("Not Valid. Message: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(status, request);
         List<String> errors = ex.getBindingResult()
-                .getAllErrors()
+            .getAllErrors()
                 .stream()
                 .map(this::getErrorString)
                 .collect(Collectors.toList());
