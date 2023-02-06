@@ -20,15 +20,15 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemDto {
     private Long id;
-    @NotBlank(message = "Name can't be blank or null", groups = {ItemMarker.onCreate.class})
+    @NotBlank(message = "Name can't be blank or null", groups = {ItemMarker.OnCreate.class})
     @Size(min = 1, max = 50, message = "Max length of name is 50 characters, min length is 1 character",
-        groups = {ItemMarker.onCreate.class})
+        groups = {ItemMarker.OnCreate.class})
     private String name;
-    @NotBlank(message = "Description can't be blank or null", groups = {ItemMarker.onCreate.class})
+    @NotBlank(message = "Description can't be blank or null", groups = {ItemMarker.OnCreate.class})
     @Size(min = 1, max = 200, message = "Max length of name is 200 characters, min length is 1 character",
-        groups = {ItemMarker.onCreate.class})
+        groups = {ItemMarker.OnCreate.class})
     private String description;
-    @NotNull(message = "Available can't be null", groups = {ItemMarker.onCreate.class})
+    @NotNull(message = "Available can't be null", groups = {ItemMarker.OnCreate.class})
     private Boolean available;
     private User owner;
     private Long requestId;

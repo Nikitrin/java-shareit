@@ -23,7 +23,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(
-        @Validated(ItemMarker.onCreate.class) @RequestBody ItemDto itemDto,
+        @Validated(ItemMarker.OnCreate.class) @RequestBody ItemDto itemDto,
         @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Create item: name = {}, owner with user id = {}", itemDto.getName(), userId);
         return itemService.createItem(itemDto, userId);

@@ -20,7 +20,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDtoSuccess createBooking(
-        @Validated(BookingMarker.onCreate.class)
+        @Validated(BookingMarker.OnCreate.class)
         @RequestBody BookingDto bookingDto,
         @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Create booking: start = {}, end = {}, item id = {}, user id = {}",
@@ -49,7 +49,7 @@ public class BookingController {
     @GetMapping
     public List<BookingDtoSuccess> getBookingCurrentUser(
         @RequestHeader("X-Sharer-User-Id") Long userId,
-        @RequestParam(defaultValue = "ALL", required = false) String state ) {
+        @RequestParam(defaultValue = "ALL", required = false) String state) {
         log.info("Get booking current user id = {}, state = {}", userId, state);
         return bookingService.getBookingCurrentUser(userId, state);
     }
@@ -57,7 +57,7 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDtoSuccess> getBookingOwner(
         @RequestHeader("X-Sharer-User-Id") Long userId,
-        @RequestParam(defaultValue = "ALL", required = false) String state ) {
+        @RequestParam(defaultValue = "ALL", required = false) String state) {
         log.info("Get booking owner id = {}, state = {}", userId, state);
         return bookingService.getBookingOwner(userId, state);
     }

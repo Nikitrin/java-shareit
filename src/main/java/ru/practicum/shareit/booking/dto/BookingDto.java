@@ -16,12 +16,12 @@ import java.time.LocalDateTime;
 public class BookingDto {
     private Long id;
     @FutureOrPresent(message = "The start of the booking cannot be in the past",
-        groups = {BookingMarker.onCreate.class})
-    @NotNull(message = "Start date can't be null", groups = {BookingMarker.onCreate.class})
+        groups = {BookingMarker.OnCreate.class})
+    @NotNull(message = "Start date can't be null", groups = {BookingMarker.OnCreate.class})
     private LocalDateTime start;
     @Future(message = "The end of the booking cannot be in the past",
-        groups = {BookingMarker.onCreate.class})
-    @NotNull(message = "End date can't be null", groups = {BookingMarker.onCreate.class})
+        groups = {BookingMarker.OnCreate.class})
+    @NotNull(message = "End date can't be null", groups = {BookingMarker.OnCreate.class})
     private LocalDateTime end;
     private Long itemId;
     private Long bookerId;

@@ -18,7 +18,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public UserDto createUser(@RequestBody @Validated(UserMarker.onCrate.class) UserDto userDto) {
+    public UserDto createUser(@RequestBody @Validated(UserMarker.OnCrate.class) UserDto userDto) {
         log.info("Create user: name = {}, email = {}", userDto.getName(), userDto.getEmail());
         return userService.createUser(userDto);
     }
