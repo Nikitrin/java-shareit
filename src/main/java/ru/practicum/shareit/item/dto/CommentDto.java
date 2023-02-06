@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class CommentDto {
     private Long id;
     @NotBlank(message = "Comment can't be blank or null")
-    @Size(max = 2048, message = "Max length of name is 2048 characters, min length is 1 character",
+    @Size(max = 512, message = "Max length of name is 2048 characters, min length is 1 character",
         groups = {ItemMarker.OnCreate.class})
     private String text;
     private Item item;

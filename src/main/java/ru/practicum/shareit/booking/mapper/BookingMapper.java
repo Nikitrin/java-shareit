@@ -16,13 +16,12 @@ public class BookingMapper {
     }
 
     public static Booking toBooking(BookingDto bookingDto) {
-        return new Booking(
-            bookingDto.getId(),
-            bookingDto.getStart(),
-            bookingDto.getEnd(),
-            null,
-            null,
-            bookingDto.getStatus());
+        Booking booking = new Booking();
+        booking.setId(bookingDto.getId());
+        booking.setStart(bookingDto.getStart());
+        booking.setEnd(bookingDto.getEnd());
+        booking.setStatus(bookingDto.getStatus());
+        return booking;
     }
 
     public static BookingDtoSuccess toDtoOut(Booking booking) {
