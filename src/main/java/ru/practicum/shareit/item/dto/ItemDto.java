@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.shareit.booking.model.BookingShort;
 import ru.practicum.shareit.item.common.ItemMarker;
+import ru.practicum.shareit.item.model.CommentShort;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,4 +32,7 @@ public class ItemDto {
     private Boolean available;
     private User owner;
     private Long requestId;
+    private BookingShort lastBooking;
+    private BookingShort nextBooking;
+    private List<CommentShort> comments;
 }

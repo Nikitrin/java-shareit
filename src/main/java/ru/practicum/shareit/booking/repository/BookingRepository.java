@@ -10,81 +10,98 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("select booking " +
         "from Booking booking " +
-        "where booking.booker = ?1 " +
+        "where booking.booker.id = ?1 " +
         "order by booking.id desc")
     List<Booking> getAllUsersBooking(Long userId);
 
     @Query("select booking " +
         "from Booking booking " +
-        "where booking.booker = ?1 " +
-        "and booking.start < current_date " +
-        "and booking.end > current_date " +
-        "and booking.status = 'APPROVED' " +
+        "where booking.booker.id = ?1 " +
+        "and booking.start < current_timestamp " +
+        "and booking.end > current_timestamp " +
         "order by booking.id desc")
     List<Booking> getCurrentUsersBooking(Long userId);
 
     @Query("select booking " +
         "from Booking booking " +
-        "where booking.booker = ?1 " +
-        "and booking.start > current_date " +
+        "where booking.booker.id = ?1 " +
+        "and booking.start > current_timestamp " +
         "order by booking.id desc")
     List<Booking> getFutureUsersBooking(Long userId);
 
     @Query("select booking " +
         "from Booking booking " +
-        "where booking.booker = ?1 " +
-        "and booking.end < current_date " +
-        "and booking.status = 'APPROVED' " +
+        "where booking.booker.id = ?1 " +
+        "and booking.end < current_timestamp " +
         "order by booking.id desc")
     List<Booking> getPastUsersBooking(Long userId);
 
     @Query("select booking " +
         "from Booking booking " +
-        "where booking.booker = ?1 " +
-        "and booking.status = ?2 " +
+        "where booking.booker.id = ?1 " +
+        "and booking.status = 'REJECTED' " +
         "order by booking.id desc")
-    List<Booking> getWaitingOrRejectedUsersBooking(Long userId, String status);
+    List<Booking> getRejectedUsersBooking(Long userId);
+
+    @Query("select booking " +
+        "from Booking booking " +
+        "where booking.booker.id = ?1 " +
+        "and booking.status = 'WAITING' " +
+        "order by booking.id desc")
+    List<Booking> getWaitingUsersBooking(Long userId);
 
     //Owner
     @Query("select booking " +
         "from Booking booking " +
-        "join Item item " +
-        "where item.owner.id = ?1 " +
-        "and booking.status = ?2 " +
+        "where booking.item.owner.id = ?1 " +
+        "and booking.status = 'REJECTED' " +
         "order by booking.id desc")
-    List<Booking> getWaitingOrRejectedOwnerBooking(Long userId, String status);
+    List<Booking> getRejectedOwnerBooking(Long userId);
 
     @Query("select booking " +
         "from Booking booking " +
-        "join Item item " +
-        "where item.owner.id = ?1 " +
+        "where booking.item.owner.id = ?1 " +
+        "and booking.status = 'WAITING' " +
+        "order by booking.id desc")
+    List<Booking> getWaitingOwnerBooking(Long userId);
+
+    @Query("select booking " +
+        "from Booking booking " +
+        "where booking.item.owner.id = ?1 " +
         "order by booking.id desc")
     List<Booking> getAllOwnerBooking(Long userId);
 
     @Query("select booking " +
         "from Booking booking " +
-        "join Item item " +
-        "where item.owner.id = ?1 " +
-        "and booking.start < current_date " +
-        "and booking.end > current_date " +
-        "and booking.status = 'APPROVED' " +
+        "where booking.item.owner.id = ?1 " +
+        "and booking.start < current_timestamp " +
+        "and booking.end > current_timestamp " +
         "order by booking.id desc")
     List<Booking> getCurrentOwnerBooking(Long userId);
 
     @Query("select booking " +
         "from Booking booking " +
-        "join Item item " +
-        "where item.owner.id = ?1 " +
-        "and booking.start > current_date " +
+        "where booking.item.owner.id = ?1 " +
+        "and booking.start > current_timestamp " +
         "order by booking.id desc")
     List<Booking> getFutureOwnerBooking(Long userId);
 
     @Query("select booking " +
         "from Booking booking " +
-        "join Item item " +
-        "where item.owner.id = ?1 " +
-        "and booking.end < current_date " +
-        "and booking.status = 'APPROVED' " +
+        "where booking.item.owner.id = ?1 " +
+        "and booking.end < current_timestamp " +
         "order by booking.id desc")
     List<Booking> getPastOwnerBooking(Long userId);
+
+    @Query("select booking " +
+        "from Booking booking " +
+        "where booking.item.id = ?1 " +
+        "order by booking.id asc")
+    List<Booking> getLastBooking(Long itemId);
+
+    @Query("select booking " +
+        "from Booking booking " +
+        "where booking.item.id = ?1 " +
+        "order by booking.start desc")
+    List<Booking> getNextBooking(Long itemId);
 }

@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.*;
 import ru.practicum.shareit.booking.common.BookingMarker;
-import ru.practicum.shareit.booking.common.BookingStatus;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -25,6 +24,6 @@ public class BookingDto {
     @NotNull(message = "End date can't be null", groups = {BookingMarker.onCreate.class})
     private LocalDateTime end;
     private Long itemId;
-    private Long booker;
-    private BookingStatus status;
+    private Long bookerId;
+    private String status;
 }

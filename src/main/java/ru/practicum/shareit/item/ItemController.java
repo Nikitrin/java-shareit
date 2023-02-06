@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.common.ItemMarker;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.CommentShort;
+import ru.practicum.shareit.item.service.CommentService;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
     private ItemService itemService;
+    private CommentService commentService;
 
     @PostMapping
     public ItemDto createItem(
@@ -52,5 +56,13 @@ public class ItemController {
     public List<ItemDto> searchItemsByText(@RequestParam String text) {
         log.info("Search items by text = {}", text);
         return itemService.searchItemsByText(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentShort createComment(@Validated @RequestBody CommentDto commentDto,
+                                      @PathVariable Long itemId,
+                                      @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Create comment: text = {}, user id = {}, to item id = {}", commentDto.getText(), userId, itemId);
+        return commentService.createComment(commentDto, userId, itemId);
     }
 }
