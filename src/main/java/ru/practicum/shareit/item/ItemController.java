@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.common.ItemMarker;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.CommentShort;
@@ -23,7 +22,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(
-        @Validated(ItemMarker.OnCreate.class) @RequestBody ItemDto itemDto,
+        @Validated @RequestBody ItemDto itemDto,
         @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Create item: name = {}, owner with user id = {}", itemDto.getName(), userId);
         return itemService.createItem(itemDto, userId);

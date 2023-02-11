@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select item " +
@@ -20,4 +21,10 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
         "lower(item.description) like concat('%', ?1, '%')) " +
         "order by item.id")
     List<Item> searchItemsByText(String text);
+
+    @Query("select item " +
+        "from Item item " +
+        "where item.request.id = ?1 " +
+        "order by item.request.id desc")
+    Set<Item> findItemByRequestId(Long requestId);
 }

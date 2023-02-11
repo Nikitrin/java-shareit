@@ -28,17 +28,25 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String TIMESTAMP = "timestamp";
-    private static final String STATUS = "status";
-    private static final String ERROR = "error message";
+    private static final String HTTP_CODE = "http code";
+    private static final String HTTP_STATUS = "http status";
     private static final String PATH = "path";
-    private static final String REASONS = "error";
+    private static final String ERROR = "error";
 
+
+    @ExceptionHandler(value = UserNotFoundException.class)
+    protected ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
+        log.error("UserNotFoundException");
+        Map<String, Object> body = getGeneralErrorBody(HttpStatus.NOT_FOUND, request);
+        body.put(ERROR, "UserNotFoundException");
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
 
     @ExceptionHandler(value = NotFoundException.class)
     protected ResponseEntity<Object> handleNotFound(NotFoundException ex, WebRequest request) {
         log.error("NotFoundException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.NOT_FOUND, request);
-        body.put(REASONS, ex.getMessage());
+        body.put(ERROR, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
@@ -46,7 +54,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handlerInvalidInput(ValidationException ex, WebRequest request) {
         log.error("ValidationException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.BAD_REQUEST, request);
-        body.put(REASONS, ex.getMessage());
+        body.put(ERROR, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -54,7 +62,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handlerUnsupportedStatus(UnsupportedStatusException ex, WebRequest request) {
         log.error("UnsupportedStatusException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.BAD_REQUEST, request);
-        body.put(REASONS, ex.getMessage());
+        body.put(ERROR, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -62,7 +70,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handlerMissingHeader(MissingRequestHeaderException ex, WebRequest request) {
         log.error("MissingRequestHeaderException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.BAD_REQUEST, request);
-        body.put(REASONS, ex.getMessage());
+        body.put(ERROR, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -70,7 +78,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handlerForbidden(ForbiddenException ex, WebRequest request) {
         log.error("ForbiddenException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.FORBIDDEN, request);
-        body.put(REASONS, ex.getMessage());
+        body.put(ERROR, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
@@ -78,7 +86,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handlerAvailable(AvailableException ex, WebRequest request) {
         log.error("AvailableException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.BAD_REQUEST, request);
-        body.put(REASONS, ex.getMessage());
+        body.put(ERROR, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -87,7 +95,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                                                    WebRequest request) {
         log.error("DataIntegrityViolationException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.CONFLICT, request);
-        body.put(REASONS, ex.getMessage());
+        body.put(ERROR, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
@@ -96,7 +104,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                                                    WebRequest request) {
         log.error("NoSuchElementException: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.NOT_FOUND, request);
-        body.put(REASONS, ex.getMessage());
+        body.put(ERROR, ex.getMessage());
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
@@ -112,15 +120,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 .stream()
                 .map(this::getErrorString)
                 .collect(Collectors.toList());
-        body.put(REASONS, errors);
+        body.put(ERROR, errors);
         return new ResponseEntity<>(body, headers, status);
     }
 
     private Map<String, Object> getGeneralErrorBody(HttpStatus status, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put(TIMESTAMP, OffsetDateTime.now());
-        body.put(STATUS, status.value());
-        body.put(ERROR, status.getReasonPhrase());
+        body.put(HTTP_CODE, status.value());
+        body.put(HTTP_STATUS, status.getReasonPhrase());
         body.put(PATH, getRequestUrl(request));
         return body;
     }

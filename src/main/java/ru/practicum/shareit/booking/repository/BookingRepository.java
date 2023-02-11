@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
@@ -12,7 +13,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         "from Booking booking " +
         "where booking.booker.id = ?1 " +
         "order by booking.id desc")
-    List<Booking> getAllUsersBooking(Long userId);
+    List<Booking> getAllUsersBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
@@ -20,35 +21,35 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         "and booking.start < current_timestamp " +
         "and booking.end > current_timestamp " +
         "order by booking.id desc")
-    List<Booking> getCurrentUsersBooking(Long userId);
+    List<Booking> getCurrentUsersBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
         "where booking.booker.id = ?1 " +
         "and booking.start > current_timestamp " +
         "order by booking.id desc")
-    List<Booking> getFutureUsersBooking(Long userId);
+    List<Booking> getFutureUsersBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
         "where booking.booker.id = ?1 " +
         "and booking.end < current_timestamp " +
         "order by booking.id desc")
-    List<Booking> getPastUsersBooking(Long userId);
+    List<Booking> getPastUsersBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
         "where booking.booker.id = ?1 " +
         "and booking.status = 'REJECTED' " +
         "order by booking.id desc")
-    List<Booking> getRejectedUsersBooking(Long userId);
+    List<Booking> getRejectedUsersBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
         "where booking.booker.id = ?1 " +
         "and booking.status = 'WAITING' " +
         "order by booking.id desc")
-    List<Booking> getWaitingUsersBooking(Long userId);
+    List<Booking> getWaitingUsersBooking(Long userId, PageRequest pageRequest);
 
     //Owner
     @Query("select booking " +
@@ -56,20 +57,20 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         "where booking.item.owner.id = ?1 " +
         "and booking.status = 'REJECTED' " +
         "order by booking.id desc")
-    List<Booking> getRejectedOwnerBooking(Long userId);
+    List<Booking> getRejectedOwnerBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
         "where booking.item.owner.id = ?1 " +
         "and booking.status = 'WAITING' " +
         "order by booking.id desc")
-    List<Booking> getWaitingOwnerBooking(Long userId);
+    List<Booking> getWaitingOwnerBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
         "where booking.item.owner.id = ?1 " +
         "order by booking.id desc")
-    List<Booking> getAllOwnerBooking(Long userId);
+    List<Booking> getAllOwnerBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
@@ -77,21 +78,21 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         "and booking.start < current_timestamp " +
         "and booking.end > current_timestamp " +
         "order by booking.id desc")
-    List<Booking> getCurrentOwnerBooking(Long userId);
+    List<Booking> getCurrentOwnerBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
         "where booking.item.owner.id = ?1 " +
         "and booking.start > current_timestamp " +
         "order by booking.id desc")
-    List<Booking> getFutureOwnerBooking(Long userId);
+    List<Booking> getFutureOwnerBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
         "where booking.item.owner.id = ?1 " +
         "and booking.end < current_timestamp " +
         "order by booking.id desc")
-    List<Booking> getPastOwnerBooking(Long userId);
+    List<Booking> getPastOwnerBooking(Long userId, PageRequest pageRequest);
 
     @Query("select booking " +
         "from Booking booking " +
