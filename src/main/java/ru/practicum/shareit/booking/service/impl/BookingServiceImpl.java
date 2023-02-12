@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.common.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -71,27 +72,27 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoSuccess> getBookingCurrentUser(Long userId, String state) {
+    public List<BookingDtoSuccess> getBookingCurrentUser(Long userId, String state, Integer from, Integer size) {
         userRepository.findById(userId).orElseThrow();
         List<Booking> bookings;
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.getAllUsersBooking(userId);
+                bookings = bookingRepository.getAllUsersBooking(userId, PageRequest.of(from, size));
                 break;
             case "CURRENT":
-                bookings = bookingRepository.getCurrentUsersBooking(userId);
+                bookings = bookingRepository.getCurrentUsersBooking(userId, PageRequest.of(from, size));
                 break;
             case "PAST":
-                bookings = bookingRepository.getPastUsersBooking(userId);
+                bookings = bookingRepository.getPastUsersBooking(userId, PageRequest.of(from, size));
                 break;
             case "FUTURE":
-                bookings = bookingRepository.getFutureUsersBooking(userId);
+                bookings = bookingRepository.getFutureUsersBooking(userId, PageRequest.of(from, size));
                 break;
             case "WAITING":
-                bookings = bookingRepository.getWaitingUsersBooking(userId);
+                bookings = bookingRepository.getWaitingUsersBooking(userId, PageRequest.of(from, size));
                 break;
             case "REJECTED":
-                bookings = bookingRepository.getRejectedUsersBooking(userId);
+                bookings = bookingRepository.getRejectedUsersBooking(userId, PageRequest.of(from, size));
                 break;
             default:
                 throw new UnsupportedStatusException(String.format("Unknown state: %s", state));
@@ -104,27 +105,27 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoSuccess> getBookingOwner(Long userId, String state) {
+    public List<BookingDtoSuccess> getBookingOwner(Long userId, String state, Integer from, Integer size) {
         userRepository.findById(userId).orElseThrow();
         List<Booking> bookings;
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.getAllOwnerBooking(userId);
+                bookings = bookingRepository.getAllOwnerBooking(userId, PageRequest.of(from, size));
                 break;
             case "CURRENT":
-                bookings = bookingRepository.getCurrentOwnerBooking(userId);
+                bookings = bookingRepository.getCurrentOwnerBooking(userId, PageRequest.of(from, size));
                 break;
             case "PAST":
-                bookings = bookingRepository.getPastOwnerBooking(userId);
+                bookings = bookingRepository.getPastOwnerBooking(userId, PageRequest.of(from, size));
                 break;
             case "FUTURE":
-                bookings = bookingRepository.getFutureOwnerBooking(userId);
+                bookings = bookingRepository.getFutureOwnerBooking(userId, PageRequest.of(from, size));
                 break;
             case "WAITING":
-                bookings = bookingRepository.getWaitingOwnerBooking(userId);
+                bookings = bookingRepository.getWaitingOwnerBooking(userId, PageRequest.of(from, size));
                 break;
             case "REJECTED":
-                bookings = bookingRepository.getRejectedOwnerBooking(userId);
+                bookings = bookingRepository.getRejectedOwnerBooking(userId, PageRequest.of(from, size));
                 break;
             default:
                 throw new UnsupportedStatusException(String.format("Unknown state: %s", state));

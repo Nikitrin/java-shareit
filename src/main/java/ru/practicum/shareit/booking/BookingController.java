@@ -49,16 +49,20 @@ public class BookingController {
     @GetMapping
     public List<BookingDtoSuccess> getBookingCurrentUser(
         @RequestHeader("X-Sharer-User-Id") Long userId,
-        @RequestParam(defaultValue = "ALL", required = false) String state) {
-        log.info("Get booking current user id = {}, state = {}", userId, state);
-        return bookingService.getBookingCurrentUser(userId, state);
+        @RequestParam(defaultValue = "ALL", required = false) String state,
+        @RequestParam(defaultValue = "0", required = false) Integer from,
+        @RequestParam(defaultValue = "20", required = false) Integer size) {
+        log.info("Get booking owner id = {}, state = {}, from = {}, size = {}", userId, state, from, size);
+        return bookingService.getBookingCurrentUser(userId, state, from / size + from % size, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDtoSuccess> getBookingOwner(
         @RequestHeader("X-Sharer-User-Id") Long userId,
-        @RequestParam(defaultValue = "ALL", required = false) String state) {
-        log.info("Get booking owner id = {}, state = {}", userId, state);
-        return bookingService.getBookingOwner(userId, state);
+        @RequestParam(defaultValue = "ALL", required = false) String state,
+        @RequestParam(defaultValue = "0", required = false) Integer from,
+        @RequestParam(defaultValue = "20", required = false) Integer size) {
+        log.info("Get booking owner id = {}, state = {}, from = {}, size = {}", userId, state, from, size);
+        return bookingService.getBookingOwner(userId, state, from, size);
     }
 }

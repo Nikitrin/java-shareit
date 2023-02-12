@@ -12,5 +12,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
         "from Comment comment " +
         "where comment.item.id = ?1 " +
         "order by comment.item.id")
-    public List<Comment> getAllByItem(Long itemId);
+    List<Comment> getAllByItem(Long itemId);
 }

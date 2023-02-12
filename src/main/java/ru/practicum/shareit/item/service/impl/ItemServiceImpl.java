@@ -6,6 +6,8 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingShort;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.handler.exception.ForbiddenException;
+import ru.practicum.shareit.handler.exception.ItemNotFoundException;
+import ru.practicum.shareit.handler.exception.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -14,6 +16,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -28,38 +32,43 @@ public class ItemServiceImpl implements ItemService {
     private UserRepository userRepository;
     private BookingRepository bookingRepository;
     private CommentRepository commentRepository;
+    private ItemRequestRepository itemRequestRepository;
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
-        User owner = userRepository.findById(userId).orElseThrow();
+        User owner = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(owner);
+        if (itemDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow();
+            item.setRequest(itemRequest);
+        }
         return ItemMapper.toDto(itemRepository.save(item), null, null, null);
     }
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, Long itemId, Long userId) {
-        User owner = userRepository.findById(userId).orElseThrow();
-        Item item = itemRepository.findById(itemId).orElseThrow();
+        User owner = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         if (!item.getOwner().equals(owner)) throw new ForbiddenException("The item was added by another user");
         if (itemDto.getName() != null) item.setName(itemDto.getName());
         if (itemDto.getDescription() != null) item.setDescription(itemDto.getDescription());
         if (itemDto.getAvailable() != null) item.setIsAvailable(itemDto.getAvailable());
         List<CommentShort> comments = commentRepository.getAllByItem(itemId).stream()
-            .map(CommentMapper::toCommentShort)
-            .collect(Collectors.toList());
+                .map(CommentMapper::toCommentShort)
+                .collect(Collectors.toList());
         return ItemMapper.toDto(itemRepository.save(item),
-            getLastBooking(itemId),
-            getNextBooking(itemId),
+                getLastBooking(itemId),
+                getNextBooking(itemId),
             comments);
     }
 
     @Override
     public ItemDto getItemById(Long itemId, Long userId) {
-        Item item = itemRepository.findById(itemId).orElseThrow();
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         List<CommentShort> comments = commentRepository.getAllByItem(itemId).stream()
-            .map(CommentMapper::toCommentShort)
-            .collect(Collectors.toList());
+                .map(CommentMapper::toCommentShort)
+                .collect(Collectors.toList());
         if (item.getOwner().getId().equals(userId)) {
             return ItemMapper.toDto(itemRepository.save(item),
                 getLastBooking(itemId),

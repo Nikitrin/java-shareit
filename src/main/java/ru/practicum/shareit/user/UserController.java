@@ -1,10 +1,9 @@
 package ru.practicum.shareit.user;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.common.UserMarker;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -13,12 +12,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(path = "/users")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping
-    public UserDto createUser(@RequestBody @Validated(UserMarker.OnCrate.class) UserDto userDto) {
+    public UserDto createUser(@RequestBody @Validated UserDto userDto) {
         log.info("Create user: name = {}, email = {}", userDto.getName(), userDto.getEmail());
         return userService.createUser(userDto);
     }

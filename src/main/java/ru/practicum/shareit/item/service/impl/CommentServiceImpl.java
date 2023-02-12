@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -31,7 +32,8 @@ public class CommentServiceImpl implements CommentService {
     public CommentShort createComment(CommentDto commentDto, Long userId, Long itemId) {
         User user = userRepository.findById(userId).orElseThrow();
         Item item = itemRepository.findById(itemId).orElseThrow();
-        List<Booking> bookings = bookingRepository.getPastUsersBooking(userId);
+        List<Booking> bookings = bookingRepository.getPastUsersBooking(userId,
+            PageRequest.of(0, Integer.MAX_VALUE));
         for (Booking booking : bookings) {
             if (booking.getItem().getId().equals(itemId)) {
                 Comment comment = CommentMapper.toComment(commentDto);
