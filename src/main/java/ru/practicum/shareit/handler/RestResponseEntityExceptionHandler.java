@@ -35,10 +35,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
 
     @ExceptionHandler(value = UserNotFoundException.class)
-    protected ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
+    protected ResponseEntity<Object> handlerUserNotFoundException(UserNotFoundException ex, WebRequest request) {
         log.error("UserNotFoundException");
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(ERROR, "UserNotFoundException");
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(value = ItemNotFoundException.class)
+    protected ResponseEntity<Object> handlerItemNotFoundException(ItemNotFoundException ex, WebRequest request) {
+        log.error("ItemNotFoundException");
+        Map<String, Object> body = getGeneralErrorBody(HttpStatus.NOT_FOUND, request);
+        body.put(ERROR, "ItemNotFoundException");
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 

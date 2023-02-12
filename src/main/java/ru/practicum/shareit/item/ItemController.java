@@ -22,45 +22,48 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(
-        @Validated @RequestBody ItemDto itemDto,
-        @RequestHeader("X-Sharer-User-Id") Long userId) {
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @Validated @RequestBody ItemDto itemDto) {
         log.info("Create item: name = {}, owner with user id = {}", itemDto.getName(), userId);
         return itemService.createItem(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(
-        @RequestBody ItemDto itemDto,
-        @RequestHeader("X-Sharer-User-Id") Long userId,
-        @PathVariable Long itemId) {
+            @PathVariable Long itemId,
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestBody ItemDto itemDto) {
         log.info("Update item with id = {}, owner with user id = {}", itemId, userId);
         return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(
-        @PathVariable Long itemId,
-        @RequestHeader("X-Sharer-User-Id") Long userId) {
+            @PathVariable Long itemId,
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Get item with id = {}, owner with user id = {}", itemId, userId);
         return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAllItems(
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Get all items user id = {}", userId);
         return itemService.getAllItems(userId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItemsByText(@RequestParam String text) {
+    public List<ItemDto> searchItemsByText(
+            @RequestParam String text) {
         log.info("Search items by text = {}", text);
         return itemService.searchItemsByText(text);
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentShort createComment(@Validated @RequestBody CommentDto commentDto,
-                                      @PathVariable Long itemId,
-                                      @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public CommentShort createComment(
+            @PathVariable Long itemId,
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @Validated @RequestBody CommentDto commentDto) {
         log.info("Create comment: text = {}, user id = {}, to item id = {}", commentDto.getText(), userId, itemId);
         return commentService.createComment(commentDto, userId, itemId);
     }

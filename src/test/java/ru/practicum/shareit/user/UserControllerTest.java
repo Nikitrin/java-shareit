@@ -25,10 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest {
     @Autowired
     private ObjectMapper mapper;
-    @MockBean
-    private UserService userService;
     @Autowired
     private MockMvc mockMvc;
+    @MockBean
+    private UserService userService;
 
     @Test
     void createUser_whenUserValid_thenReturnUser() throws Exception {
@@ -90,7 +90,8 @@ class UserControllerTest {
         doThrow(UserNotFoundException.class).when(userService).getUserById(userId);
 
         mockMvc.perform(get("/users/" + userId))
-            .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.error", is("UserNotFoundException")));
     }
 
     @Test
@@ -142,7 +143,8 @@ class UserControllerTest {
         doThrow(UserNotFoundException.class).when(userService).deleteUser(userId);
 
         mockMvc.perform(delete("/users/" + userId))
-            .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.error", is("UserNotFoundException")));
 
         verify(userService, times(1)).deleteUser(userId);
     }
